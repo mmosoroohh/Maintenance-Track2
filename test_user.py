@@ -1,6 +1,8 @@
 import unittest
 import os
 import json
+
+import app
 from app import create_app, db
 
 
@@ -21,39 +23,39 @@ class UserTestCase(unittest.TestCase):
     
     def test_create_user(self):
         """Test API can create a user (POST request)"""
-        res = self.client().post('/users/', data=self.user)
+        res = self.client().post('api/users/', data=self.user)
         self.assertEqual(res.status_code, 201)
         self.assertIn('Arnold Osoro', str(res.data))
 
     def test_get_all_users(self):
         """Test API can get a user (GET request)."""
-        res = self.client().post('/users/', data=self.user)
+        res = self.client().post('api/users/', data=self.user)
         self.assertEqual(res.status_code, 201)
-        res = self.client().get('/users/')
+        res = self.client().get('api/users/')
         self.assertEqual(res.status_code, 200)
         self.assertIn('Arnold Osoro', str(res.data))
 
     def test_get_user_by_id(self):
         """Test API can get a single user by using his/her id."""
-        rv = self.client().post('/users/', data=self.user)
+        rv = self.client().post('api/users/', data=self.user)
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
-            '/users/{}'.format(result_in_json['id']))
+            'api/users/{}'.format(result_in_json['id']))
         self.assertEqual(result.status_code, 200)
         self.assertIn('Arnold Osoro', str(result.data))
 
     def test_delete_user(self):
         """Test API can delete an existing user. (DELETE request)."""
         rv = self.client().post(
-            '/users/',
+            'api/users/',
             data={'name': 'Brian Osoro', 'email': 'brian@gmail.com', 'password': 'brian123'})
         self.assertEqual(rv.status_code, 201)
         res = self.client().delete('/users/1')
         self.assertEqual(res.status_code, 200)
 
         # Test to see if it exists, should return a 404
-        result = self.client().get('/users/1')
+        result = self.client().get('api/users/1')
         self.assertEqual(result.status_code, 404)
 
     def tearDown(self):
