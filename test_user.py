@@ -39,14 +39,14 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
-            '/users/{}'.format(result_in_json['id']))
+            'api/users/{}'.format(result_in_json['id']))
         self.assertEqual(result.status_code, 200)
         self.assertIn('Arnold Osoro', str(result.data))
 
     def test_delete_user(self):
         """Test API can delete an existing user. (DELETE request)."""
         rv = self.client().post(
-            '/users/',
+            'api/users/',
             data={'name': 'Brian Osoro', 'email': 'brian@gmail.com', 'password': 'brian123'})
         self.assertEqual(rv.status_code, 201)
         res = self.client().delete('api/users/1')
