@@ -3,58 +3,67 @@ import os
 import json
 
 
-import app
 from app import create_app, db
 
 class MaintenanceTrackerTestCase(unittest.TestCase):
-    """This class represent user signup, signin, make request"""
+    """This class represent Maintenance Tracker requests test case"""
 
     def setUp(self):
         """Define test variable and initialize app."""
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
-        self.user = {
-            "name": "Arnold Osoro",
-            "email": "arnoldmaengwe@gmail.com",
-            "password": "secret123"
-        }
-        self.new_request = {
-            "name": "Computer monitor",
-            "description": "Broken screen needs repair",
-            "category": "repair",
-            "department" : "Accounts"
-        }
+        self.request = {'name': 'Computer monitor','description': 'Broken screen needs repair', 'category': 'repair', 'department' : 'Accounts'}
 
         # bind the app to the current context
         with self.app.app_context():
             # create all tables
             db.create_all()
 
-    def register_user(self):
-        """Register new user"""
-        res = self.app.post('/api/v1/auth/signup',
-        data = json.dumps(self.user),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_create_request(self):
+        """Test API can create a request (POST request)"""
+        res = self.client().post('/api/v1/requests/', data=self.request)
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('Computer monitor', str(res.data))
 
-    def login_user(self):
-        """Sign in account."""
-        res = self.app.post('/api/v1/auth/signin',
-        data = json.dumps(self.user),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_api_can_get_all_requests(self):
+        """Test API can get a request (GET request)"""
+        res = self.client().post('/api/v1/requests/', data=self.request)
+        self.assertEqual(res.status_code, 201)
+        res =self.client().get('/api/v1/requests/')
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Computer monitor', str(res.data))
 
-    def logout(self):
-        """Log out of account"""
-        return self.app.get('/api/v1/auth/logout', follow_redirects=True)
+    def test_api_can_get_request_by_id(self):
+        """Test API can get a single request by using id."""
+        rv = self.client().post('/api/v1/requests/', data=self.request)
+        self.assertEqual(rv.status_code, 201)
+        result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        result =self.client().get(
+            '/api/v1/requests/{}'.format(result_in_json['id']))
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Computer monitor', str(result.data))
 
-    def new_request(self):
-        """ Create a new request."""
-        res = self.app.post('/api/v1/dashboard/user<id>/new_request/',
-        data = json.dumps(self.new_request),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_request_can_be_modified(self):
+        """Test APi can modify existing request. (PUT request)"""
+        rv = self.client().post(
+            '/api/v1/requests/1',
+            data={'name': 'Printer', 'description' : 'printer jam', 'category' : 'repair', 'department' : 'Finance'})
+        self.assertEqual(rv.status_code, 200)
+        results =self.client().get('/api/v1/requests/1')
+        self.assertIn('Printer', str(results.data))
 
+    def test_delete_request(self):
+        """Test Api can delete an existing request. (DELETE request)"""
+        rv = self.client().post(
+            '/api/v1/requests/',
+            data={'name': 'Printer', 'description' : 'Replace ink', 'category' : 'maitenance', 'department' : 'Finance'})
+        self.assertEqual(rv.status_code, 201)
+        res = self.client().delete('/api/v1/requests/1')
+        self.assertEqual(res.status_code, 200)
+        # Test to see if it exits, should return a 404
+        result = self.client().get('/api/v1/requests/1')
+        self.assertEqual(result.status_code, 404)
+  
     def tearDown(self):
         """teardown all initialized variables"""
         with self.app.app_context():
