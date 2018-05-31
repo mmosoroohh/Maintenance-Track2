@@ -3,7 +3,7 @@ import os
 import json
 
 
-import app
+
 from app import create_app, db
 
 

@@ -1,0 +1,13 @@
+language : python
+python:
+    - "3.6.3"
+
+install:
+  - pip install -r requirements.txt
+  - pip install python-coveralls
+  - pip install coverage
+  - pip install nose
+
+script:
+  - nosetest --rednose test_maintracker.py test_user.py --nocapture --with-coverage
+
