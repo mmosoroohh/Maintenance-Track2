@@ -1,5 +1,5 @@
 from flask_api import FlaskAPI
-from flask import request, jsonify, abort
+from flask import request, jsonify
 
 
 
@@ -12,96 +12,42 @@ def create_app(config_name):
 
 
     app = FlaskAPI(__name__, instance_relative_config=True)
-    app.config.from_object(app_config[config_name])
-    app.config.from_pyfile('config.py')
+    
     
 
 
 
-    @app.route('/api/v1/requests/', methods=['POST', 'GET'])
+    @app.route('/api/v1/requests/', methods=['POST'])
     def api_request():
-        if request.method == "POST":
+        create_request = request.get_json(force=True)
+        api_request = Api_Request.api_request(create_request['id'], create_request['name'], create_request['description'], create_request['category'], create_request['department'])
 
-            data = request.get_json()
-
-            if data:
-                api_request = Api_Request(name=data['name'], description=data['description'], category=data['category'], department=data['department'])
-                api_request.save()
-                response = jsonify({
-                    'id': api_request.id,
-                    'name': api_request.name,
-                    'description': api_request.description,
-                    'category': api_request.category,
-                    'department': api_request.department
-                })
-                response.status_code = 201
-                return jsonify({'message' : 'New request created!'})
-        else:
-            # GET
-            api_requests = Api_Request.get_all()
-            results = []
-
-            for api_request in api_requests:
-                obj = {
-                    'id': api_request.id,
-                    'name': api_request.name,
-                    'description': api_request.description,
-                    'category': api_request.category,
-                    'department': api_request.department
-                }
-                results.append(obj)
-            response = jsonify(results)
-            response.status_code = 200
-            return response
-
+        return jsonify({'message' : 'New request created!'})
+        
+    @app.route('/api/v1/requests/', methods=['GET']) 
+    def view_all_requests():
+        requests = view_all_requests()
+        return jsonify({'message': requests})
 
     @app.route('/api/v1/requests/<int:id>', methods=['GET'])
     def single_api_request(id):
         # retrieve a request using it's ID
-        api_request = Api_Request.query.filter_by(id=id).first()
-        if  not api_request:
-            return jsonify({'message': 'No request found!'})
+        results = Api_Request.view_single_request(id)
 
-        obj = {
-            'id': api_request.id,
-            'name': api_request.name,
-            'description': api_request.description,
-            'category': api_request.category,
-            'department': api_request.department
-        }
-
-        return jsonify({'api_request': obj})
+        return jsonify({'message': results})
 
     @app.route('/api/v1/requests/<int:id>', methods=['PUT'])
     def api_request_modified(id):
-        api_request = Api_Request.query.filter_by(id=id).first() 
-
-        if not api_request:
-            return jsonify({'message' : 'No request found!'})
-        
-        else:
-
-            api_request = Api_Request(name=data['name'], description=data['description'], category=data['category'], department=data['department'])
-            api_request.save()
-            response = jsonify({
-                'id': api_request.id,
-                'name': api_request.name,
-                'description': api_request.description,
-                'category': api_request.category,
-                'department': api_request.department
-            })
-            response.status_code = 201
-            return jsonify({'message' : 'Request has been modified!'})
+        edit = request.get_json(force=True)
+        modified = Api_Request.modified_request(
+            edit['id'], edit['name'])
+        return jsonify({'message' : 'Request has been modified!'})
 
 
     @app.route('/api/v1/requests/<int:id>', methods=['DELETE'])
     def api_request_deleted(id):
-        api_request = Api_Request.query.filter_by(id=id).first()
-        
-        if not api_request:
-            return jsonify({'message': 'No request found!'})
+        delete = Api_Request.delete_request(id)
 
-        api_request.delete()
         return jsonify({'message' : 'Request has been deleted!'})
 
     return app

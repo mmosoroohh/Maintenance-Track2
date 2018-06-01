@@ -1,10 +1,12 @@
-from tests import app
 import unittest
 import os
 import json
+import app
+import unittest
+import json
+from app.models import Api_Request
 
-
-from app import create_app, db
+from app import create_app
 
 class MaintenanceTrackerTestCase(unittest.TestCase):
     """This class represent user signup, signin, make request"""
@@ -12,55 +14,42 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
     def setUp(self):
         """Define test variable and initialize app."""
         self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.user = {
-            "name": "Arnold Osoro",
-            "email": "arnoldmaengwe@gmail.com",
-            "password": "secret123"
-        }
-        self.new_request = {
-            "name": "Computer monitor",
-            "description": "Broken screen needs repair",
-            "category": "repair",
-            "department" : "Accounts"
-        }
+        self.checker = self.app.test_client()
 
-        # bind the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
+    def test_create_request(self):
+        """Test creating a request"""
+        api_request = {"id": 1, "name": "Computer Monitor", "description": "Breken screen", "category": "repair", "department": "Finance"}
+        response = self.checker.post(
+            '/api/v1/requests/', data=json.dumps(api_request), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
-    def register_user(self):
-        """Register new user"""
-        res = self.app.post('/api/v1/auth/signup',
-        data = json.dumps(self.user),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_view_single_request(self):
+        """Test view a single request on API"""
+        api_request = {"id": 2}
+        response = self.checker.get(
+            '/api/v1/requests/2', data=json.dumps(api_request), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
-    def login_user(self):
-        """Sign in account."""
-        res = self.app.post('/api/v1/auth/signin',
-        data = json.dumps(self.user),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_view_all_requests(self):
+        """Test view all requests on the API"""
+        response = self.checker.get(
+            '/api/v1/requests/', content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
-    def logout(self):
-        """Log out of account"""
-        return self.app.get('/api/v1/auth/logout', follow_redirects=True)
+    def test_modify_request(self):
+        """Test modify a request on API"""
+        api_request = {"id": 3, "name": "Keyboard", "description": "Pour coffee on it", "category": "repair", "department": "Accounts"}
+        response = self.checker.put(
+            '/api/v1/requests/3', data=json.dumps(api_request), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
-    def new_request(self):
-        """ Create a new request."""
-        res = self.app.post('/api/v1/dashboard/user<id>/new_request/',
-        data = json.dumps(self.new_request),
-        headers = {'content-type': "application/json"})
-        return res
+    def test_delete_request(self):
+        """Test delete request"""
+        api_request = {"id": 4}
+        response = self.checker.delete(
+            '/api/v1/requests/4', data=json.dumps(api_request), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
-    def tearDown(self):
-        """teardown all initialized variables"""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
 
 if __name__ == "__main__":
     unittest.main()
