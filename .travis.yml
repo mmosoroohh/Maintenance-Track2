@@ -9,5 +9,5 @@ install:
   - pip install nose
 
 script:
-  - nosetest --rednose test_maintracker.py test_user.py --nocapture --with-coverage
+  - nosetest test_maintracker.py test_user.py --nocapture --with-coverage
 
