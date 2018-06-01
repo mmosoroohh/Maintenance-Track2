@@ -3,7 +3,7 @@ import os
 import json
 
 
-from app import create_app, db
+from app import create_app
 
 class MaintenanceTrackerTestCase(unittest.TestCase):
     """This class represent Maintenance Tracker requests test case"""

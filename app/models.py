@@ -1,16 +1,6 @@
-from app import db
 
-class Api_Request(db.Model):
+class Api_Request():
     """This class represents the requests in Maintenance Tracker."""
-
-    __tablename__ = 'api_requests'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    description = db.Column(db.String(255))
-    category = db.Column(db.String(255))
-    department = db.Column(db.String(255))
-   
 
     def __init__(self, name, description, category, department):
         """initialize with name, description, category, department"""

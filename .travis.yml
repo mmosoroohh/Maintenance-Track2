@@ -11,3 +11,6 @@ install:
 script:
   - nosetests test_maintracker.py, test_user.py --nocapture --with-coverage
 
+after-success:
+   - coveralls
+   

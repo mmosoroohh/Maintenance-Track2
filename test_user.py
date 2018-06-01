@@ -3,9 +3,6 @@ import os
 import json
 
 
-import app
-from app import create_app, db
-
 
 class UserTestCase(unittest.TestCase):
     """This class represets user test case."""
