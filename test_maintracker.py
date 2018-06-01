@@ -12,7 +12,7 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
         """Define test variable and initialize app."""
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
-        self.request = {'name': 'Computer monitor','description': 'Broken screen needs repair', 'category': 'repair', 'department' : 'Accounts'}
+        self.api_request = {'name': 'Computer monitor','description': 'Broken screen needs repair', 'category': 'repair', 'department' : 'Accounts'}
 
         # bind the app to the current context
         with self.app.app_context():
@@ -21,13 +21,13 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
 
     def test_create_request(self):
         """Test API can create a request (POST request)"""
-        res = self.client().post('/api/v1/requests/', data=self.request)
+        res = self.client().post('/api/v1/requests/', data=self.api_request)
         self.assertEqual(res.status_code, 201)
         self.assertIn('Computer monitor', str(res.data))
 
     def test_api_can_get_all_requests(self):
         """Test API can get a request (GET request)"""
-        res = self.client().post('/api/v1/requests/', data=self.request)
+        res = self.client().post('/api/v1/requests/', data=self.api_request)
         self.assertEqual(res.status_code, 201)
         res =self.client().get('/api/v1/requests/')
         self.assertEqual(res.status_code, 200)
@@ -35,7 +35,7 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
 
     def test_api_can_get_request_by_id(self):
         """Test API can get a single request by using id."""
-        rv = self.client().post('/api/v1/requests/', data=self.request)
+        rv = self.client().post('/api/v1/requests/', data=self.api_request)
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result =self.client().get(
@@ -47,7 +47,7 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
         """Test APi can modify existing request. (PUT request)"""
         rv = self.client().post(
             '/api/v1/requests/1',
-            data={'name': 'Printer', 'description' : 'printer jam', 'category' : 'repair', 'department' : 'Finance'})
+            data={'name': 'Printer'})
         self.assertEqual(rv.status_code, 200)
         results =self.client().get('/api/v1/requests/1')
         self.assertIn('Printer', str(results.data))
@@ -56,7 +56,7 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
         """Test Api can delete an existing request. (DELETE request)"""
         rv = self.client().post(
             '/api/v1/requests/',
-            data={'name': 'Printer', 'description' : 'Replace ink', 'category' : 'maitenance', 'department' : 'Finance'})
+            data={'name': 'Printer'})
         self.assertEqual(rv.status_code, 201)
         res = self.client().delete('/api/v1/requests/1')
         self.assertEqual(res.status_code, 200)
