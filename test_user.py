@@ -2,7 +2,7 @@ import unittest
 import os
 import json
 
-
+from app import create_app
 
 class UserTestCase(unittest.TestCase):
     """This class represets user test case."""

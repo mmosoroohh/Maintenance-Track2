@@ -1,5 +1,4 @@
 from flask_api import FlaskAPI
-from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 
 
@@ -7,8 +6,6 @@ from flask import request, jsonify, abort
 # local import
 from instance.config import app_config
 
-# initialize sql-alchemy
-db = SQLAlchemy()
 
 def create_app(config_name):
     from app.models import Api_Request
@@ -17,8 +14,7 @@ def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
-    app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
-    db.init_app(app)
+    
 
 
 
@@ -84,7 +80,7 @@ def create_app(config_name):
             return jsonify({'message' : 'No request found!'})
         
         else:
-            data = request.get_json()
+
             api_request = Api_Request(name=data['name'], description=data['description'], category=data['category'], department=data['department'])
             api_request.save()
             response = jsonify({

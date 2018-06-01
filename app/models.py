@@ -10,12 +10,12 @@ class Api_Request():
         self.department = department
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        session.add(self)
+        session.commit()
 
     @staticmethod
     def get_all():
-        return Api_Request.query.all()
+        return ''
 
     def delete(self):
         db.session.delete(self)
