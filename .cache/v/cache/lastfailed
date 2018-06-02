@@ -1,0 +1,4 @@
+{
+  "tests/test_maintracker.py::MaintenanceTrackerTestCase::test_delete_request": true, 
+  "tests/test_maintracker.py::MaintenanceTrackerTestCase::test_modify_request": true
+}
