@@ -40,8 +40,10 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
 
     def test_delete_request(self):
         """Test delete request"""
-        response = self.client.delete('/api/v1/requests/1',content_type='application/json')
+        response = self.client.get('/api/v1/requests/1', data=json.dumps(self.request), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        response = self.client.delete('/api/v1/requests/1', content_type='application/json')
+        self.assertEqual(response.status_code, 404)
 
 
 
