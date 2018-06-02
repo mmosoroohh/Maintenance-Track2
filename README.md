@@ -42,7 +42,7 @@ Install package requirements to your environment
 Create a.env file in your Maintenance-Track2 root directory and add:
 <pre><code>
 $ . venv/bin/activate
-$ export FLASK_APP="app.py"
+$ export FLASK_APP="run.py"
 $ export SECRET="any-character-or-STRING-YOU-PREFER"
 $ export APP_SETTINGS="development"
 $ export DATABASE_URL="postgresql://username:password@localhost/test_mt_db"
