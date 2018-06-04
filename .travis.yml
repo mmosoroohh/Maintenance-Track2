@@ -9,7 +9,8 @@ install:
   - pip install nose
 
 script:
-- python -m pytest --cov-report term-missing --cov=tests 
+- nosetests
+- pytest
 
 after-success:
    - coveralls
