@@ -3,3 +3,4 @@ venv/
 .cache/
 __init__.pyc
 config.pyc
+.pytest_cache
