@@ -12,6 +12,6 @@ script:
 - nosetests --with-coverage --cover-package=app
 - pytest
 
-after-success:
+after_script:
    - coveralls
 
