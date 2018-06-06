@@ -2,12 +2,12 @@
 Maintenance Tracker App is an application that provides users with the ability to reach out to operations or repairs department regarding repair or maintenance requests and monitor the status of their request.
 
 # Usage
-- Home page]
+- Home page
 - Create an account 
 - Login into your account
 - Make a request
 - A request is approved or disapproved
-- View your own requests]
+- View your own requests
 - Admin can view all requests
 
 # Prerequisities
