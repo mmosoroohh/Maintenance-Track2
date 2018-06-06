@@ -48,15 +48,12 @@ $ export APP_SETTINGS="development"
 $ export DATABASE_URL="postgresql://username:password@localhost/test_mt_db"
 </code></pre>
 
-# Database migration
-Create two Database in PostgreSQL:
+# Database integration
+Create a Database in PostgreSQL:
 - mt_db (development DB)
-- test_mt_db (testing DB)
 Run the following commands for each database:
 <pre><code>
-$ python manage.py db init
-$ python manage.py db migrate
-$ python manage.py db upgrade
+$ python manage.py
 </code></pre>
 
 # Testing
