@@ -2,6 +2,7 @@ import unittest
 import os
 import json
 import psycopg2
+from manage import migrate
 from flask.testing import FlaskClient
 
 conn = psycopg2.connect("dbname='m_tracker_test' user='mmosoroohh' host='localhost' password='test123'")
@@ -17,14 +18,9 @@ class UserTestCase(unittest.TestCase):
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = create_app(config_name="testing")
-        self.client = self.app.test_client()
+        migrate(self.app)
+        self.client = self.app.test_client
         self.user = {'name': 'Arnold Osoro', 'email': 'arnoldmaengwe@gmail.com', 'username': 'Osoro', 'password': 'secret123'}
-
-        # bind the app to current context
-        with self.app.app_context():
-            # create all tables
-            cur.execute('''CREATE TABLE IF NOT EXISTS users(id serial PRIMARY KEY, name varchar, email varchar, username varchar, password varchar);''')
-            conn.commit()
     
     def test_signup_user(self):
         """Test API can register a user (POST request)"""
@@ -66,10 +62,8 @@ class UserTestCase(unittest.TestCase):
 
     def tearDown(self):
         """teardown all initialized variable"""
-        with self.app.app_context():
-            # drop all tables
-            cur.execute("DROP TABLE IF EXISTS users")
-            conn.commit()
+        cur.execute("DELETE FROM users;")
+        conn.commit()
             
 
 # Make the test conveniently executable

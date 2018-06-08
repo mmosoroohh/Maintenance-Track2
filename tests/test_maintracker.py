@@ -3,6 +3,7 @@ import os
 import json
 import psycopg2
 from flask.testing import FlaskClient
+from manage import migrate
 
 
 conn = psycopg2.connect("dbname='m_tracker_test' user='mmosoroohh' host='localhost' password='test123'")
@@ -16,13 +17,16 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
     def setUp(self):
         """Define test variable and initialize app."""
         self.app = create_app(config_name="testing")
-        self.client = self.app.test_client()
+        migrate(self.app)
+        self.client = self.app.test_client
         self.request = {'name': 'Computer Monitor', 'description': 'Broken screen', 'category': 'repair', 'department': 'Finance'}
 
         # bind the app to the current context
         with self.app.app_context():
             # create all tables
-            cur.execute('''CREATE TABLE IF NOT EXISTS requests(id serial PRIMARY KEY, name varchar, description varchar, category varchar, department varchar, user_id INT REFERENCES(id));''')
+            cur.execute('''CREATE TABLE IF NOT EXISTS requests(id serial PRIMARY KEY, name varchar,
+             description varchar, category varchar, department varchar, user_id INT, 
+             FOREIGN KEY (user_id) REFERENCES users(id));''')
             conn.commit()
 
         
@@ -59,14 +63,14 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
         response = self.client.get('/api/v2/requests/1', data=json.dumps(self.request), content_type='application/json')
         self.assertEqual(response.status_code, 200)
         response = self.client.delete('/api/v2/requests/1',content_type='application/json')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 204)
         assert isinstance(self, FlaskClient)
 
     def tearDown(self):
         """teardown all initialized variable"""
         with self.app.app_context():
             # drop all tables
-            cur.execute("DROP TABLE IF EXITS requests")
+            cur.execute("DROP TABLE IF EXISTS requests")
             conn.commit()
 
 

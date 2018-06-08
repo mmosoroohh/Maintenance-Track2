@@ -1,10 +1,10 @@
 from flask_api import FlaskAPI
 from flask import request, jsonify, abort, make_response
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (jwt_required, create_access_token, get_jwt_identity, get_raw_jwt)
 from functools import wraps
 from flask_jwt_extended import JWTManager
-from app.helpers import insert_user, create_request, get_requests, get_user, get_request
+from app.helpers import insert_user, create_request, get_requests, get_user, get_request, edit_request, delete_request, admin_get_requests, admin_modify_request
+from app.models import User
 
 
 
@@ -23,16 +23,24 @@ def create_app(config_name):
     jwt = JWTManager(app)
 
 
+    def admin_required(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            user = get_user(get_jwt_identity())
+            if user['role'] != 1:
+                return jsonify({'message': 'Not authorized!'}), 401
+            return f(*args, **kwargs)
+        return wrapped
+
+
 
     @app.route('/api/v2/auth/signup/', methods=['POST'])
     def signup_user():
-        user = {
-            'name': request.json.get('name'),
-            'email': request.json.get('email'),
-            'username': request.json.get('username'),
-            'password': request.json.get('password')
-        }
-        insert_user(user)
+        user = User(name = request.json.get("name"),
+                    email = request.json.get("email"),
+                    username = request.json.get("username"),
+                    password = request.json.get("password"))
+        user.save()
         return jsonify({'message': 'New user registered!'})
 
 
@@ -52,7 +60,7 @@ def create_app(config_name):
         return make_response('Could not verify!'), 401
 
 
-    @app.route('/api/v2/auth/requests/', methods=['POST'])
+    @app.route('/api/v2/auth/users/requests/', methods=['POST'])
     @jwt_required
     def api_request():
 
@@ -66,54 +74,92 @@ def create_app(config_name):
             'department': request.json.get('department'),
             "user_id": user['id']
         }
+        if requests['name'] == '':
+            return jsonify({'message': 'Can not enter empty field!'})
         create_request(requests)
         return jsonify({'Requests' : requests}), 201
         
-    @app.route('/api/v2/auth/requests/', methods=['GET']) 
+    @app.route('/api/v2/auth/users/requests/', methods=['GET']) 
     @jwt_required
     def view_all_requests():
         username = get_jwt_identity()
         user = get_user(username)
+        
         requests = get_requests(user['id'])
         return jsonify({'request': requests})
 
-    @app.route('/api/v2/auth/requests/<int:id>', methods=['GET'])
+    @app.route('/api/v2/auth/users/requests/<int:id>', methods=['GET'])
     @jwt_required
     def single_api_request(id):
         username = get_jwt_identity()
         user = get_user(username)
         # retrieve a request using it's ID
+
         requests = get_request(id)
         return jsonify({'request': requests})
 
-    @app.route('/api/v2/auth/requests/<int:id>', methods=['PUT'])
+    @app.route('/api/v2/auth/users/requests/<int:id>', methods=['PUT'])
     @jwt_required
     def api_request_modified(id):
         username = get_jwt_identity()
         user = get_user(username)
         # retrieve a request using it's ID
-        edit_requests = get_request(user['id'])
-        if edit_requests is None:
+        edit = get_request(id)
+        
+        if edit is None:
             return jsonify({'message': 'Request not found!'})
-        edit_request = edit_requests[0]
-        edit_request['name']= request.json.get('name')
-        edit_request['description'] = request.json.get('description')
-        edit_request['category']= request.json.get('category')
-        edit_request['department']=request.json.get('department')
 
-        return jsonify({'requests' : edit_request})
+        edit['name']= request.json.get('name')
+        edit['description'] = request.json.get('description')
+        edit['category']= request.json.get('category')
+        edit['department']=request.json.get('department')
+    
+        edit_request(id, edit)
+
+        return jsonify({'requests' : edit})
 
 
-    @app.route('/api/v2/auth/requests/<int:id>', methods=['DELETE'])
+    @app.route('/api/v2/auth/users/requests/<int:id>', methods=['DELETE'])
     @jwt_required
     def api_request_deleted(id):
-        delete_request = [request for request in requests if request['id'] == id]
-        print(len(delete_request))
-        if len(delete_request) == 0:
-            abort(404)
-        requests.remove(delete_request[0])
+        username = get_jwt_identity()
+        user = get_user(username)
 
-        return jsonify({'requests' : requests})
+        requests = get_request(id)
+        if requests is None:
+            return jsonify({'message': "Request not found!"})
+        
+        delete_request(id)
+        return jsonify({'message' : 'Request has been deleted!'})
+
+    @app.route('/api/v2/auth/requests/', methods=['GET'])
+    @jwt_required
+    @admin_required
+    def admi_get_all_requests():
+        username = get_jwt_identity()
+        user = get_user(username)
+
+        requests = admin_get_requests()
+        return jsonify({'message': requests})
+
+    @app.route('/api/v2/auth/requests/<int:id>', methods=['PUT'])
+    @jwt_required
+    @admin_required
+    def admin_can_modify(id):
+        username = get_jwt_identity()
+        user = get_user(username)
+
+        modify = get_request(id)
+
+        if modify is None:
+            return jsonify({'message': 'Request Not found!'})
+        
+        modify['status'] = request.json.get('status')
+
+        admin_can_modify(modify)
+
+        return jsonify({'Requests': modify})
+
 
     @app.route('/api/v2/auth/signout/', methods=['POST'])
     @jwt_required
