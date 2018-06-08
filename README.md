@@ -54,9 +54,7 @@ Create two Database in PostgreSQL:
 - test_mt_db (testing DB)
 Run the following commands for each database:
 <pre><code>
-$ python manage.py db init
-$ python manage.py db migrate
-$ python manage.py db upgrade
+$ python manage.py
 </code></pre>
 
 # Testing
