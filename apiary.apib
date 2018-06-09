@@ -11,10 +11,9 @@ Maintenance Tracker App is an application that provides users with the ability t
 1. Users can create an account and log in.
 2. The users should be able to make maintenance or repairs request.
 3. An admin should be able to approve/reject a repair/maintenance request.
-4. The admin should be able to mark request as resolved once it is done.
+4. The admin should be able to resolve a request once it is done.
 5. The admin should be able to view all maintenance/repairs requests on the application
-6. The admin should be able to filter requests
-7. The user can view all his/her requests
+6. The user can view all his/her requests
 
 Making API calls will require the following header
 
@@ -24,6 +23,8 @@ After authentication, the rest of the endpoints will require to include the bear
 
 Authentication: Bearer [Token]
 
+
+## Register a User
 
 ### Sign Up [POST]
 Where a user can register his/her credentials on the API
@@ -98,6 +99,7 @@ The registered user can create a maintenance/repair request.
         }
         
 ### Get all requests[GET]
+A user can be able to view all his/her requests on the API.
 + Response 200 (application/json)
         
         {
@@ -115,6 +117,8 @@ The registered user can create a maintenance/repair request.
         }
         
 ### User can get a single Request [GET]
+A user can view a particular request's details he/she posted on the API.
+
 + Parameters
     + request_id(integer) - Id of the request the user wants to get details.
 
@@ -134,6 +138,8 @@ The registered user can create a maintenance/repair request.
         
 
 ### User can Modify a Request [PUT]
+A user can modify a particular request which he/she posted on the API.
+
 + Parameters
     + request_id (integer) - Id of the request the user wants to edit/modify.
     
@@ -162,7 +168,7 @@ The registered user can create a maintenance/repair request.
         }
 
 ### User can delete a Request [DELETE]
-The user can a particular request he/she posted on the API.
+The user can delete a particular request he/she posted on the API.
 
 + Parameters
     + request_id(integer) - The ID of the request the user can delete a request.
@@ -260,7 +266,7 @@ The admin can get all available requests for all the users.
         }
         
 ## Admin Update / View a Request [/admin/requests/<int: id>]
-
+Admin can view and update a particualr request's details on it's status.
 + Parameters
     + request_id (integer) - The ID of the request the admin would like to update it's status.
     
