@@ -102,6 +102,10 @@ $ nosetests --with-coverage
 </table>
 </pre>
 
+# Resources and Documentation
+## API Documentation
+The Api documentation can be accessed from [Apiary](https://maintenancetrackerapi.docs.apiary.io/#) 
+
 # Authors
 - Arnold M. Osoro - [mmosoroohh](https://github.com/mmosoroohh)
 
