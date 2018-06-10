@@ -53,14 +53,14 @@ class MaintenanceTrackerTestCase(unittest.TestCase):
 
     def test_modify_request(self):
         """Test modify a request on API"""
-        self.client.post('/api/v2/requests/', data=json.dumps(self.request), content_type='application/json')
+        self.client.put('/api/v2/requests/', data=json.dumps(self.request), content_type='application/json')
         response = self.client.put('/api/v2/requests/1', data=json.dumps(self.request), content_type='application/json')
         self.assertEqual(response.status_code, 200)
         assert isinstance(self, FlaskClient)
 
     def test_delete_request(self):
         """Test delete request"""
-        response = self.client.get('/api/v2/requests/1', data=json.dumps(self.request), content_type='application/json')
+        response = self.client.delete('/api/v2/requests/1', data=json.dumps(self.request), content_type='application/json')
         self.assertEqual(response.status_code, 200)
         response = self.client.delete('/api/v2/requests/1',content_type='application/json')
         self.assertEqual(response.status_code, 204)

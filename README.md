@@ -75,33 +75,72 @@ $ nosetests --with-coverage
 <th>HTTP-Verbs</th>
 </tr>
 <tr>
+<td>Register a user</td>
+<td>/api/v1/auth/signin/</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>Login a user</td>
+<td>/api/v1/auth/signin</td>
+<td>POST</td>
+</tr>
+<tr>
 <td>User can create new request</td>
-<td>/api/v1/requests/</td>
+<td>/api/v1/user/<user_id>requests/</td>
 <td>POST</td>
 </tr>
 <tr>
 <td>User can view all request</td>
-<td>/api/v1/requests/</td>
+<td>/api/v1/user/<user_id>requests/</td>
 <td>GET</td>
 </tr>
 <tr>
 <td>user can view single request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>GET</td>
 </tr>
 <tr>
 <td>user can modify request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>PUT</td>
 </tr>
 <tr>
 <td>user can delete a request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>DELETE</td>
+</tr>
+<tr>
+<td>Admin can view all requests.</td>
+<td>/api/v1/user/requests/</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>Admin can approve request</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+<tr>
+<td>Admin can disapprove a request</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>Admin can resolve</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>A user can sign out</td>
+<td>/api/v1/auth/signout/</td>
+<td>POST</td>
+</tr>
 </tr>
 </tr>
 </table>
 </pre>
+
+# Resources and Documentation
+## API Documentation
+The Api documentation can be accessed from [Apiary](https://maintenancetrackerapi.docs.apiary.io/#) 
 
 # Authors
 - Arnold M. Osoro - [mmosoroohh](https://github.com/mmosoroohh)

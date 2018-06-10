@@ -9,11 +9,12 @@ cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 
 def insert_user(user):
-    cur.execute("INSERT INTO USERS (name,email,username,password) values(%s,%s,%s,%s)",(
+    cur.execute("INSERT INTO USERS (name,email,username,password,role) values(%s,%s,%s,%s,%s)",(
         user.name,
         user.email,
         user.username,
-        user.password))
+        user.password,
+        user.role))
     conn.commit()
 
 def get_user(username):
@@ -26,12 +27,12 @@ def get_user(username):
 
 def create_request(requests):
     cur.execute("INSERT INTO REQUESTS (name, description, category, department, status, user_id) values(%s,%s,%s,%s,%s, %s)",(
-        requests['name'],
-        requests['description'],
-        requests['category'],
-        requests['department'],
+        requests.name,
+        requests.description,
+        requests.category,
+        requests.department,
         'pending',
-        requests['user_id']))
+        requests.user_id))
     conn.commit()
 
 def get_requests(user_id):
@@ -74,7 +75,7 @@ def admin_get_requests():
     return requests
 
 def admin_modify_request(id, req):
-    cur.execute("UPDATE requests SET status = %s WHERE id = %s ", (
+    cur.execute("UPDATE requests SET status = %s WHERE id = %s", (
         req['status'],
-        id))
+        req['id']))
     conn.commit()
