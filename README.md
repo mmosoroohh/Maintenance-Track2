@@ -45,7 +45,7 @@ $ . venv/bin/activate
 $ export FLASK_APP="run.py"
 $ export SECRET="any-character-or-STRING-YOU-PREFER"
 $ export APP_SETTINGS="development"
-$ export DATABASE_URL="postgresql://username:password@localhost/test_mt_db"
+$ export DATABASE_URL="postgresql://username:password@localhost/mt_db"
 </code></pre>
 
 # Database migration
