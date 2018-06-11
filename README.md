@@ -76,7 +76,7 @@ $ nosetests --with-coverage
 </tr>
 <tr>
 <td>Register a user</td>
-<td>/api/v1/auth/signin/</td>
+<td>/api/v1/auth/signup/</td>
 <td>POST</td>
 </tr>
 <tr>

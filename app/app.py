@@ -2,11 +2,10 @@ from flask_api import FlaskAPI
 from flask import request, jsonify, abort, make_response, json
 from flask_jwt_extended import (jwt_required, create_access_token, get_jwt_identity, get_raw_jwt)
 from functools import wraps
-from passlib.hash import sha256_crypt
 from flask_jwt_extended import JWTManager
 from app.helpers import insert_user, get_user, create_request, get_requests, get_request, edit_request, delete_request, admin_get_requests, admin_modify_request
 from app.models import User, Requests
-
+import pdb
 
 
 # local import
@@ -40,7 +39,7 @@ def create_app(config_name):
         user = User(name = request.json.get("name"),
                     email = request.json.get("email"),
                     username = request.json.get("username"),
-                    password = sha256_crypt.encrypt(str(request.json.get("password"))),
+                    password = request.json.get("password"),
                     role = request.json.get("role"))
         user.save()
         return jsonify({'message': 'New user registered!', 'User': user.__dict__})
@@ -53,11 +52,12 @@ def create_app(config_name):
     def signin():
         username = request.json.get("username")
         password = request.json.get("password")
-
+        
         user = get_user(username)
         if user is None:
             return jsonify({"message": "Username not found"}), 404
         elif user['password'] != password:
+            
             return jsonify({'message': "Incorrect password"}), 400
         else :
             token = create_access_token(identity=request.json.get('username'))

@@ -31,7 +31,7 @@ class UserTestCase(unittest.TestCase):
     def test_signup_username_exists(self):
         """Test API can register with existing username (POST request)."""
         res = self.client().post('api/v2/auth/signin/', data=json.dumps(self.user), content_type='application/json')
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(res.status_code, 400)
         assert isinstance(self, FlaskClient)
 
     def test_login_successful(self):
@@ -56,7 +56,7 @@ class UserTestCase(unittest.TestCase):
     def test_logout_successful(self):
         res = self.client().post(
             '/api/v2/auth/signout/', data=json.dumps(self.user), content_type='application/json')
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 401)
         assert isinstance(self, FlaskClient)
 
 
