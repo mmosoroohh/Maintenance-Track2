@@ -5,7 +5,7 @@ class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
     JWT_SECRET_KEY = "kasjdflkasldfkjal;dskjfla"
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    DATABASE_NAME = "m_tracker"
 
 class DevelopmentConfig(Config):
     """Configurations for Development."""
@@ -14,8 +14,8 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Configuration for Testing with seperate test database."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://mmosoroohh:test123@localhost:5432/testmain'
     DEBUG = True
+    DATABASE_NAME = "m_tracker_test"
 
 class StagingConfig(Config):
     """Configuratin for Staging."""

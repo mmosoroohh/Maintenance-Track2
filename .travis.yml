@@ -8,6 +8,15 @@ install:
   - pip install coverage
   - pip install nose
 
+env:
+  global:
+    - DB_NAME=mmosoroohh
+    - DB_PASSWORD=test123
+
+before_script:
+  - psql -c 'create database m_tracker_test;' -U postgres
+  - psql -c "create user mmosoroohh with password 'test123';" -U mmosoroohh
+
 script:
 - nosetests --with-coverage --cover-package=app
 - pytest

@@ -45,7 +45,7 @@ $ . venv/bin/activate
 $ export FLASK_APP="run.py"
 $ export SECRET="any-character-or-STRING-YOU-PREFER"
 $ export APP_SETTINGS="development"
-$ export DATABASE_URL="postgresql://username:password@localhost/test_mt_db"
+$ export DATABASE_URL="postgresql://username:password@localhost/mt_db"
 </code></pre>
 
 # Database integration
@@ -74,29 +74,64 @@ $ nosetests --with-coverage
 <th>HTTP-Verbs</th>
 </tr>
 <tr>
+<td>Register a user</td>
+<td>/api/v1/auth/signup/</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>Login a user</td>
+<td>/api/v1/auth/signin</td>
+<td>POST</td>
+</tr>
+<tr>
 <td>User can create new request</td>
-<td>/api/v1/requests/</td>
+<td>/api/v1/user/<user_id>requests/</td>
 <td>POST</td>
 </tr>
 <tr>
 <td>User can view all request</td>
-<td>/api/v1/requests/</td>
+<td>/api/v1/user/<user_id>requests/</td>
 <td>GET</td>
 </tr>
 <tr>
 <td>user can view single request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>GET</td>
 </tr>
 <tr>
 <td>user can modify request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>PUT</td>
 </tr>
 <tr>
 <td>user can delete a request</td>
-<td>/api/v1/requests/request_id</td>
+<td>/api/v1/user/<user_id>request_id</td>
 <td>DELETE</td>
+</tr>
+<tr>
+<td>Admin can view all requests.</td>
+<td>/api/v1/user/requests/</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>Admin can approve request</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+<tr>
+<td>Admin can disapprove a request</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>Admin can resolve</td>
+<td>/api/v1/user/<user_id>request_id</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>A user can sign out</td>
+<td>/api/v1/auth/signout/</td>
+<td>POST</td>
+</tr>
 </tr>
 </tr>
 </table>

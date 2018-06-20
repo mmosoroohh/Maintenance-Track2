@@ -1,24 +1,30 @@
 import psycopg2
 
-conn = psycopg2.connect("dbname='m_tracker' user='mmosoroohh' host='localhost' password='test123'")
+def migrate(app):
 
-cur = conn.cursor()
+    conn = psycopg2.connect("dbname='{}' user='mmosoroohh' host='localhost' password='test123'".format(app.config['DATABASE_NAME']))
 
-# create a table
+    cur = conn.cursor()
 
-cur.execute("CREATE TABLE IF NOT EXISTS users(id serial PRIMARY KEY, name varchar, email varchar, username varchar, password varchar);")
+    # create a table
 
-cur.execute("CREATE TABLE IF NOT EXISTS requests(id serial PRIMARY KEY, name varchar, description varchar, category varchar, department varchar);")
+    cur.execute("CREATE TABLE IF NOT EXISTS users(id serial PRIMARY KEY, name varchar, email varchar, username varchar, password varchar, role varchar);")
 
-cur.execute("SELECT * FROM users WHERE username = 'admin'")
+    cur.execute("""CREATE TABLE IF NOT EXISTS requests(
+            id serial PRIMARY KEY, name varchar, description varchar,
+            category varchar, department varchar, status varchar, user_id INT , 
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );""")
 
-admin = cur.fetchone()
+    cur.execute("SELECT * FROM users WHERE username = 'admin'")
 
-if admin is None:
-    cur.execute("INSERT INTO users(username, password) VALUES ('admin', 'test254')")
+    admin = cur.fetchone()
 
-cur.execute('SELECT * FROM users')
+    if admin is None:
+        cur.execute("INSERT INTO users(username, password, role) VALUES ('admin', 'test254', 1)")
 
-items = cur.fetchone()
-print("Migrations are a success!", items)
-conn.commit()
+    cur.execute('SELECT * FROM users')
+
+    items = cur.fetchone()
+    print("Migrations are a success!", items)
+    conn.commit()
